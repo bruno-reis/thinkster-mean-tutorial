@@ -39,6 +39,18 @@ router.param('post', function(req, res, next, id) {
   });
 });
 
+router.param('comment', function(req, res, next, id) {
+  var query = Comment.findById(id);
+
+  query.exec(function (err, comment) {
+    if (err) { return next(err); }
+    if (!comment) { return next(new Error('can not find comment')); }
+
+    req.comment = comment;
+    return next();
+  });
+});
+
 router.get('/posts/:post', function(req, res) {
   res.json(req.post);
 });
@@ -48,6 +60,34 @@ router.put('/posts/:post/upvote', function(req, res, next) {
     if (err) { return next(err); }
 
     res.json(post);
+  });
+});
+
+router.post('/posts/:post/comments', function(req, res, next) {
+  var comment = new Comment(req.body);
+  comment.post = req.post;
+
+  comment.save(function(err, comment) {
+    if (err) { return next(err); }
+
+    req.post.comments.push(comment);
+    req.post.save(function (err, post) {
+      if (err) { return next(err); }
+
+      res.json(comment);
+    });
+  });
+});
+
+router.get('/posts/:post/comments/:comment', function(req, res) {
+  res.json(req.comment);
+});
+
+router.put('/posts/:post/comments/:comment/upvote', function(req, res, next) {
+  req.comment.upvote (function(err, comment) {
+    if (err) { return next(err); }
+
+    res.json(comment);
   });
 });
 
