@@ -49,8 +49,8 @@ app.config(['$stateProvider', '$urlRouterProvider',
   }]
 );
 
-app.factory('posts', ['$http',
-  function($http){
+app.factory('posts', ['$http', 'auth',
+  function($http, auth){
     var o = { posts: [] };
 
     o.getAll = function() {
@@ -66,27 +66,33 @@ app.factory('posts', ['$http',
     };
 
     o.create = function(post) {
-      return $http.post('/posts', post).success(function(data){
+      return $http.post('/posts', post, {
+        headers: {Authorization: 'Bearer '+auth.getToken() }
+      }).success(function(data){
         o.posts.push(data);
       });
     };
 
     o.upvote = function(post) {
-      return $http.put('/posts/' + post._id + '/upvote')
-        .success(function(data){
-          post.upvotes += 1;
-        });
+      return $http.put('/posts/' + post._id + '/upvote', null, {
+        headers: {Authorization: 'Bearer '+auth.getToken()}
+      }).success(function(data){
+        post.upvotes += 1;
+      });
     };
 
     o.addComment = function(id, comment) {
-      return $http.post('/posts/' + id + '/comments', comment);
+      return $http.post('/posts/' + id + '/comments', comment, {
+        headers: {Authorization: 'Bearer '+auth.getToken() }
+      });
     };
 
     o.upvoteComment = function(post, comment) {
-      return $http.put('/posts/' + post._id + '/comments/'+ comment._id + '/upvote')
-        .success(function(data){
-          comment.upvotes += 1;
-        });
+      return $http.put('/posts/' + post._id + '/comments/'+ comment._id + '/upvote', null, {
+        headers: {Authorization: 'Bearer '+auth.getToken() }
+      }).success(function(data){
+        comment.upvotes += 1;
+      });
     };
 
     return o;
@@ -146,8 +152,9 @@ app.factory('posts', ['$http',
 )
 
 
-app.controller('MainCtrl', ['$scope', 'posts',
+app.controller('MainCtrl', ['$scope', 'posts', 'auth',
   function($scope, posts){
+    $scope.isLoggedIn = auth.isLoggedIn;
     $scope.posts = posts.posts;
 
     $scope.addPost = function(){
@@ -166,8 +173,9 @@ app.controller('MainCtrl', ['$scope', 'posts',
   }]
 );
 
-app.controller('PostsCtrl', ['$scope', 'posts', 'post',
+app.controller('PostsCtrl', ['$scope', 'posts', 'post', 'auth',
   function($scope, posts, post){
+    $scope.isLoggedIn = auth.isLoggedIn;
     $scope.post = post;
 
     $scope.addComment = function(){
@@ -188,7 +196,7 @@ app.controller('PostsCtrl', ['$scope', 'posts', 'post',
   }]
 );
 
-controller('AuthCtrl', ['$scope', '$state', 'auth',
+app.controller('AuthCtrl', ['$scope', '$state', 'auth',
   function($scope, $state, auth){
     $scope.user = {};
 
@@ -208,4 +216,12 @@ controller('AuthCtrl', ['$scope', '$state', 'auth',
       });
     };
   }]
-)
+);
+
+app.controller('NavCtrl', ['$scope', 'auth',
+  function($scope, auth){
+    $scope.isLoggedIn = auth.isLoggedIn;
+    $scope.currentUser = auth.currentUser;
+    $scope.logOut = auth.logOut;
+  }]
+);
