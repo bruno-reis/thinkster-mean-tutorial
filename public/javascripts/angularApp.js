@@ -153,7 +153,7 @@ app.factory('posts', ['$http', 'auth',
 
 
 app.controller('MainCtrl', ['$scope', 'posts', 'auth',
-  function($scope, posts){
+  function($scope, posts, auth){
     $scope.isLoggedIn = auth.isLoggedIn;
     $scope.posts = posts.posts;
 
@@ -174,7 +174,7 @@ app.controller('MainCtrl', ['$scope', 'posts', 'auth',
 );
 
 app.controller('PostsCtrl', ['$scope', 'posts', 'post', 'auth',
-  function($scope, posts, post){
+  function($scope, posts, post, auth){
     $scope.isLoggedIn = auth.isLoggedIn;
     $scope.post = post;
 
