@@ -80,5 +80,55 @@
   </form>
 </script>
 
+<script type="text/ng-template" id="/register.html">
+  <header class="page-header" style="background: orange">
+    <h1>Flapper News</h1>
+  </header>
+
+  <div ng-show="error" class="alert alert-danger row">
+    <span>{{ error.message }}</span>
+  </div>
+
+  <form ng-submit="register()"
+        style="margin-top:30px;">
+    <h3>Register</h3>
+
+    <section class="form-group">
+      <input type="text" class="form-control" placeholder="Username"
+             ng-model="user.username">
+    </section>
+
+    <section class="form-group">
+      <input type="password" class="form-control" placeholder="Password"
+             ng-model="user.password">
+    </section>
+    <button type="submit" class="btn btn-primary">Register</button>
+  </form>
+</script>
+
+<script type="text/ng-template" id="/login.html">
+  <headre class="page-header" style="background: orange">
+    <h1>Flapper News</h1>
+  </headre>
+
+  <div ng-show="error" class="alert alert-danger row">
+    <span>{{ error.message }}</span>
+  </div>
+
+  <form ng-submit="logIn()"
+        style="margin-top:30px;">
+    <h3>Log In</h3>
+
+    <section class="form-group">
+      <input type="text" class="form-control" placeholder="Username"
+             ng-model="user.username">
+    </section>
+    <section class="form-group">
+      <input type="password" class="form-control" placeholder="Password"
+             ng-model="user.password">
+    </section>
+    <button type="submit" class="btn btn-primary">Log In</button>
+  </form>
+</script>
 </body>
 </html>
